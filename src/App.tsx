@@ -1,25 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from "react";
+import { useState } from "react";
+
+import Application from "./components/Application";
 
 function App() {
+  const [login, setLogin] = useState(false);
+
+  useEffect(() => {
+    if (login === false) {
+      fetch("http://localhost:8080/api/login", {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+        body: "username=test@mail.com&password=test",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }).then((response) => {
+        if (response.status === 200) {
+          setLogin(true);
+        }
+      });
+    }
+  }, [login]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {login === true && <Application />}
+
+      {login === false && <>ответ еще не пришел</>}
+    </>
   );
 }
 
